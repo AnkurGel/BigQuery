@@ -18,10 +18,14 @@ module BigQuery
         :application_version => BigQuery::VERSION
       )
 
-      key = Google::APIClient::PKCS12.load_key(File.open(opts['key'], 'rb'),
-        "notasecret"
-      )
-
+      if opts['key'].is_a?(String) && !opts['key'].empty?
+        key = opts['key']
+      else
+        key = Google::APIClient::PKCS12.load_key(File.open(opts['key'], 'rb'),
+          "notasecret"
+        )
+      end
+      
       @asserter = Google::APIClient::JWTAsserter.new(
         opts['service_email'],
         "https://www.googleapis.com/auth/bigquery",
